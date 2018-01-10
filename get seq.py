@@ -49,7 +49,7 @@ for line in t:
                 seq = ''.join([Base_dict[k] for k in (reversed(hg19.fetch(chro, start, end)))])
         else:
             seq = 'Too large sequence'
-        list.append([name, mutations,variant_summary,drugs,evidence_type, evidence_direction, evidence_level, clinical_significance, evidence_statement, pubmed_id,citation, representative_transcript,chro, str(start), str(end), '+ or -', seq])
+        list.append([name, mutations,disease,variant_summary,drugs,evidence_type, evidence_direction, evidence_level, clinical_significance, evidence_statement, pubmed_id,citation, representative_transcript,chro, str(start), str(end), '+ or -', seq])
 # 以制表符合并每个列表中的元素
 for k in list:
     k = "\t ".join(k)
