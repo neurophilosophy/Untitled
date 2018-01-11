@@ -2,8 +2,8 @@ import os
 import pysam
 import time
 start_time = time.time()
-hg19 = pysam.FastaFile('hg19.fa')
-Base_dict = {'A':'T','G':'C','T':'A','C':'G'}
+
+Base_dict = {'A':'T','G':'C','T':'A','C':'G','a':'t','g':'c','t':'a','c':'g'}
 def rev_comple_seq(sequence):
     rev_seq = ''.join([Base_dict[k] for k in sequence])
     rev_com_seq = ''.join(reversed(rev_seq))
@@ -14,7 +14,8 @@ filename = 'nightly-ClinicalEvidenceSummaries'
 path = '/home/caesar/Desktop'
 os.chdir(path)
 print(os.getcwd())
-list = ['name', 'mutations','disease','variant_summary','drugs','evidence_type', 'evidence_direction', 'evidence_level', 'clinical_significance', 'evidence_statement', 'pubmed_id','citation', 'representative_transcript','chromsome', 'start', 'end', 'orientation', 'genomic seq','probe seq']
+hg19 = pysam.FastaFile('hg19.fa')
+list = []
 endlist = []
 final_list = []
 # 对于tsv格式的文件，其内容读取为一整个字符串读取后，用split方法分割成一个多维列表
@@ -48,17 +49,24 @@ for line in t:
                 start = int(array[19]) - 60
                 end = int(array[20]) + 59
                 genomic_seq = hg19.fetch(chro, start, end)
+                probe_seq = ''.join([Base_dict[k] for k in (reversed(genomic_seq))])
             else:
                 start = int(array[20]) - 59
                 end = int(array[19]) + 60
-                genomic_seq = ''.join([Base_dict[k] for k in (reversed(hg19.fetch(chro, start, end)))])
-            probe_seq = rev_comple_seq(genomic_seq)
+                hg19.fetch(chro, start, end)
+                probe_seq = hg19.fetch(chro, start, end)
+                genomic_seq = ''.join([Base_dict[k] for k in (reversed(probe_seq))])
+
         else:
             start = int(array[19])
             end = int(array[20])
             genomic_seq = 'Too large sequence,please check the coordinates'
             probe_seq = "None"
         list.append([name, mutations,disease,variant_summary,drugs,evidence_type, evidence_direction, evidence_level, clinical_significance, evidence_statement, pubmed_id,citation, representative_transcript,chro, str(start), str(end), '+ or -', genomic_seq, probe_seq])
+list_top = ['name', 'mutations','disease','variant_summary','drugs','evidence_type', 'evidence_direction', 'evidence_level', 'clinical_significance', 'evidence_statement', 'pubmed_id','citation', 'representative_transcript','chromsome', 'start', 'end', 'orientation', 'genomic seq','probe seq']
+# 将表头插入列表
+list.insert(1,list_top)
+list[1],list[0] = list[0],list[1]
 # 以制表符合并每个列表中的元素
 for k in list:
     k = "\t ".join(k)
