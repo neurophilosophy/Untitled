@@ -66,7 +66,7 @@ for line in t:
 list_top = ['name', 'mutations','disease','variant_summary','drugs','evidence_type', 'evidence_direction', 'evidence_level', 'clinical_significance', 'evidence_statement', 'pubmed_id','citation', 'representative_transcript','chromsome', 'start', 'end', 'orientation', 'genomic seq','probe seq']
 # 将表头插入列表
 list.insert(0,list_top)
-list[1],list[0] = list[0],list[1]
+
 # 以制表符合并每个列表中的元素
 for k in list:
     k = "\t ".join(k)
