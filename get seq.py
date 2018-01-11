@@ -4,6 +4,11 @@ import time
 start_time = time.time()
 hg19 = pysam.FastaFile('hg19.fa')
 Base_dict = {'A':'T','G':'C','T':'A','C':'G'}
+def rev_comple_seq(sequence):
+    rev_seq = ''.join([Base_dict[k] for k in sequence])
+    rev_com_seq = ''.join(reversed(rev_seq))
+    return (rev_com_seq)
+
 filename = 'nightly-ClinicalEvidenceSummaries'
 #path = 'C://Users/Administrator/Desktop' #win10 path
 path = '/home/caesar/Desktop'
@@ -47,10 +52,12 @@ for line in t:
                 start = int(array[20]) - 59
                 end = int(array[19]) + 60
                 genomic_seq = ''.join([Base_dict[k] for k in (reversed(hg19.fetch(chro, start, end)))])
+            probe_seq = rev_comple_seq(genomic_seq)
         else:
             start = int(array[19])
             end = int(array[20])
             genomic_seq = 'Too large sequence,please check the coordinates'
+            probe_seq = "None"
         list.append([name, mutations,disease,variant_summary,drugs,evidence_type, evidence_direction, evidence_level, clinical_significance, evidence_statement, pubmed_id,citation, representative_transcript,chro, str(start), str(end), '+ or -', genomic_seq, probe_seq])
 # 以制表符合并每个列表中的元素
 for k in list:
