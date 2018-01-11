@@ -9,7 +9,7 @@ filename = 'nightly-ClinicalEvidenceSummaries'
 path = '/home/caesar/Desktop'
 os.chdir(path)
 print(os.getcwd())
-list = []
+list = ['name', 'mutations','disease','variant_summary','drugs','evidence_type', 'evidence_direction', 'evidence_level', 'clinical_significance', 'evidence_statement', 'pubmed_id','citation', 'representative_transcript','chromsome', 'start', 'end', 'orientation', 'genomic seq','probe seq']
 endlist = []
 final_list = []
 # 对于tsv格式的文件，其内容读取为一整个字符串读取后，用split方法分割成一个多维列表
@@ -42,14 +42,16 @@ for line in t:
             if array[19]<=array[20]:
                 start = int(array[19]) - 60
                 end = int(array[20]) + 59
-                seq = hg19.fetch(chro, start, end)
+                genomic_seq = hg19.fetch(chro, start, end)
             else:
                 start = int(array[20]) - 59
                 end = int(array[19]) + 60
-                seq = ''.join([Base_dict[k] for k in (reversed(hg19.fetch(chro, start, end)))])
+                genomic_seq = ''.join([Base_dict[k] for k in (reversed(hg19.fetch(chro, start, end)))])
         else:
-            seq = 'Too large sequence'
-        list.append([name, mutations,disease,variant_summary,drugs,evidence_type, evidence_direction, evidence_level, clinical_significance, evidence_statement, pubmed_id,citation, representative_transcript,chro, str(start), str(end), '+ or -', seq])
+            start = int(array[19])
+            end = int(array[20])
+            genomic_seq = 'Too large sequence,please check the coordinates'
+        list.append([name, mutations,disease,variant_summary,drugs,evidence_type, evidence_direction, evidence_level, clinical_significance, evidence_statement, pubmed_id,citation, representative_transcript,chro, str(start), str(end), '+ or -', genomic_seq, probe_seq])
 # 以制表符合并每个列表中的元素
 for k in list:
     k = "\t ".join(k)
