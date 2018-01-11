@@ -65,41 +65,7 @@ for line in t:
         list.append([name, mutations,disease,variant_summary,drugs,evidence_type, evidence_direction, evidence_level, clinical_significance, evidence_statement, pubmed_id,citation, representative_transcript,chro, str(start), str(end), '+ or -', genomic_seq, probe_seq])
 list_top = ['name', 'mutations','disease','variant_summary','drugs','evidence_type', 'evidence_direction', 'evidence_level', 'clinical_significance', 'evidence_statement', 'pubmed_id','citation', 'representative_transcript','chromsome', 'start', 'end', 'orientation', 'genomic seq','probe seq']
 # 将表头插入列表
-list.insert(1,list_top)
-list[1],list[0] = list[0],list[1]
-# 以制表符合并每个列表中的元素
-for k in list:
-    k = "\t ".join(k)
-    endlist.append(k)
-# 以换行符整合列表为字符串
-final_list = "\n ".join(endlist)
-# 输出保存并关闭
-outfile = open('%s - splited.tsv' % filename, 'w', encoding="utf-8")
-outfile.write(final_list)
-outfile.close()
-stop_time = time.time()
-print('%s.tsv Done!' % filename)
-print('运行耗时为：%a秒'%(stop_time-start_time))
-
-                end = int(array[20]) + 59
-                genomic_seq = hg19.fetch(chro, start, end)
-                probe_seq = ''.join([Base_dict[k] for k in (reversed(genomic_seq))])
-            else:
-                start = int(array[20]) - 59
-                end = int(array[19]) + 60
-                hg19.fetch(chro, start, end)
-                probe_seq = hg19.fetch(chro, start, end)
-                genomic_seq = ''.join([Base_dict[k] for k in (reversed(probe_seq))])
-
-        else:
-            start = int(array[19])
-            end = int(array[20])
-            genomic_seq = 'Too large sequence,please check the coordinates'
-            probe_seq = "None"
-        list.append([name, mutations,disease,variant_summary,drugs,evidence_type, evidence_direction, evidence_level, clinical_significance, evidence_statement, pubmed_id,citation, representative_transcript,chro, str(start), str(end), '+ or -', genomic_seq, probe_seq])
-list_top = ['name', 'mutations','disease','variant_summary','drugs','evidence_type', 'evidence_direction', 'evidence_level', 'clinical_significance', 'evidence_statement', 'pubmed_id','citation', 'representative_transcript','chromsome', 'start', 'end', 'orientation', 'genomic seq','probe seq']
-# 将表头插入列表
-list.insert(1,list_top)
+list.insert(0,list_top)
 list[1],list[0] = list[0],list[1]
 # 以制表符合并每个列表中的元素
 for k in list:
