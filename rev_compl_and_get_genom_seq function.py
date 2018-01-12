@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pysam
 import os
 #path = 'C://Users/Administrator/Desktop' #win10 path
