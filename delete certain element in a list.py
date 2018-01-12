@@ -1,28 +1,38 @@
 
-list1 = [7,' ',' ',' ',' ',' ',' ','    ',' ',' ',' ',' ',' ',' ', 9,' ']
+#去除列表中已知的某些元素
+list1 = [7,' ',' ',' ',' ',' ',' ',"",'    ',' ',' ',' ',' ',' ',' ', 9,' ']
 list2 = [' ','  ']
 list = []
 for i in list1:
-    if i not in list2:
+    if i not in list2 and i != "":
         list.append(i)
 print(list)
 
-a = [1, 2, 3, 12,11,12,12,11,12, 5, 6, 8, 9]
-b = a
-for i in a:
-    if i % 2 == 0 and i % 3 == 0:
-        b.remove(i) #始终在删除第一个匹配项而不受i在次序上遍历至哪个元素的影响
-    print(a,'-----',b)
-a = b
+
+#替换掉字符串中某一特定字符
+a = 'ygewiuihakjdhkashjdhkashdkjsahkd       duplicate            131231      13231321   '
+a = a.replace("u"," ").replace("j"," ")
+a.replace("dh"," ")
 print(a)
 
 
-list1 = [7,' ',' ',' ',' ',' ',' ','    ','  ',' ',' ',' ',' ',' ',' ', 9,' ']
-list2 = [' ','  ']
-blank = []
-print(list[0] in list1)
+#>=2个连续的空格，删除
+print(" ".join(a.split()))
 
-for i in list2:
-    while i in list1:
-        list1.remove(i)
-print(list1)
+
+#空列表长度为0
+L = []
+print(len(L))
+
+
+#删除列表中符合特征要求的元素
+a = [1, 2, 3, 12,11,12,12,11,12, 5,"21","21","21" ,6, 8, 9]
+b = [1, 2, 3, 12,11,12,12,11,12, 5,"21","21","21" ,6, 8, 9]
+for i in a:
+    if type(i) != "int": #仅需判断一次，不需要反复循环判断
+        while i in b and.count(i)>=1:
+            b.remove(i)
+    elif i % 2 == 0 and i % 3 == 0 :
+        while i in b:
+            b.remove(i) #始终在删除第一个匹配项而不受i在次序上遍历至哪个元素的影响
+    print(a,'-----',b)
