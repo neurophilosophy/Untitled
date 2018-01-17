@@ -28,7 +28,7 @@ def get_genomic_seq(chro, startpoint, endpoint):
         start = startpoint
         end = endpoint
         genomic_sequence = 'Too large sequence,please check the coordinates'
-        return genomic_sequence
+    return genomic_sequence
 
 #example    
 JAK2 = (get_genomic_seq('chr9',5073770,5073770))
