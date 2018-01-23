@@ -46,7 +46,7 @@ def two_dimension_list_to_tsv_row(path,filename,list):
     return 'tranformation done!'
 
 #对于已知的NM ENST ID转换创建字典
-ID_dict = {'NM_004304':'ENST00000389048', 'NM_002944':'ENST00000368508','NM_020975':'ENST00000355710'}
+ID_dict = {'NM_999999':'ENST99999999'}
 #创建替换列表中元素函数
 def replace_element_in_list(dict,list):
     for p in list:
