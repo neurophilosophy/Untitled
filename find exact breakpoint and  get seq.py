@@ -38,7 +38,7 @@ def breakpoint_position_by_mRNA(fusionlist,exondata,position):
         strand = i[7]
         a, b, c, d, e = position[0], position[1], position[2], position[3], position[4]
         if int(i[8]) <= int(a) <= int(i[9]):
-            A = int(float(i[4])+(float(i[8])-float(i[9]))/2.0+strand_dict[strand]*(float(a)*2.0-(float(i[9])+float(i[8]))/2.0))
+            A = int(float(i[4])+(float(i[8])-float(i[9]))/2.0+strand_dict[strand]*(float(a)-(float(i[9])+float(i[8]))/2.0))
             if c == '' and d == None:
                 breakpoint = A
                 insert_seq = ''
@@ -81,7 +81,8 @@ def determine_breakpoint(fusionlist,datalist):
         B = breakpoint_position_by_mRNA(fusionlist,partner2_exondata,position2)
     else:
         print('INPUT ERROR!!')
-    return fusionlist[0:2]+A+fusionlist[3:5]+B+[fusionlist[-1]]
+    return fusionlist[0:2]+A+[fusionlist[2]]+fusionlist[3:5]+B+[fusionlist[5]]+[fusionlist[-1]]
+
 #定义反向互补函数
 def rev_comple_seq(sequence):
     Base_dict = {'A': 'T', 'G': 'C', 'T': 'A', 'C': 'G', 'a': 't', 'g': 'c', 't': 'a', 'c': 'g'}
@@ -91,6 +92,7 @@ def rev_comple_seq(sequence):
     else:
         rev_com_seq = "WRONG INPUT!!"
     return rev_com_seq
+
 
 #定义获取基因组序列函数
 def get_genomic_seq(chromosome, startpoint, endpoint, insertion, strand):
@@ -110,8 +112,8 @@ def get_genomic_seq(chromosome, startpoint, endpoint, insertion, strand):
 #————————————————————————————程序主体————————————————————————————————
 
 #获取已经筛选过的外显子坐标数据，获得二维列表
-path = 'C://Users/Administrator/Desktop'
-#path = '/home/caesar/Desktop'
+#path = 'C://Users/Administrator/Desktop'
+path = '/home/caesar/Desktop'
 os.chdir(path)
 data_filename = 'CosmicFusionExport-Translocation-filtered_exon_location'
 fusion_name = 'TranslocationName-filtered-Inferred Breakpoint'
@@ -127,12 +129,11 @@ seq_location_for_probe = []
 for i in fusion_name_data:
     C = determine_breakpoint(i,list_exon_location)
     leftseq = get_genomic_seq(C[2],C[7],C[8],C[9],C[10])
-    rightseq = get_genomic_seq(C[13],C[18],C[19],C[20],C[21])
-
+    rightseq = get_genomic_seq(C[14],C[19],C[20],C[21],C[22])
     genomic_seq = leftseq + rightseq
-    D = C + [leftseq+rightseq] + [rev_comple_seq(genomic_seq)]
+    D = C + [genomic_seq] + [rev_comple_seq(genomic_seq)] + [leftseq] + [rightseq]
     seq_location_for_probe.append(D)
-    title_text = 'Fusion_gene1	ID	chromosome	exon	number  start   stop	probe_start	probe_stop	inserted_seq	strand	Fusion_gene1	ID	chromosome	exon	number  start   stop	probe_start	probe_stop	inserted_seq	strand	fusion_name genomic_sequence    probe_seq'
+    title_text = 'Fusion_gene1	ID	chromosome	exon	number  start   stop	probe_start	probe_stop	inserted_seq	strand	Base	Fusion_gene1	ID	chromosome	exon	number  start   stop	probe_start	probe_stop	inserted_seq	strand	Base	fusion_name genomic_sequence    probe_seq'
 title = title_text.split()
 seq_location_for_probe.insert(0,title)
 
