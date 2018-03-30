@@ -22,11 +22,7 @@ def tsv2list (path,filename,fileformat):
 
 #二维列表转tsv输出
 def list2tsv (path,inputlist,filename,fileformat):
-    joinlist = []
-    for i in inputlist:
-        i = '\t'.join(i)
-        joinlist.append(i)
-    finallist = '\n'.join(joinlist)
+    finallist = '\n'.join(['\t'.join(i) for i in inputlist])
     os.chdir(path)
     with open('%s-merged.%s'%(filename,fileformat),'w',encoding= 'utf-8') as f:
         f.write(finallist)
