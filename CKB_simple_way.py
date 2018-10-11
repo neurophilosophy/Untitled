@@ -653,29 +653,7 @@ def main(simple_way=True):
             time.sleep(10)
 
 
-main(simple_way=True)
-
-
-# 处理 PMID后置问题
-def ckb_translation(ckbfile):
-    wb_source = openpyxl.load_workbook(ckbfile)
-    sheet_Translation = wb_source['Sheet1']
-    for i in range(2, sheet_Translation.max_row + 1):
-        chinese = sheet_Translation.cell(row=i, column=2).value.strip().split('|')
-        new_text = []
-        for y in chinese:
-            search = re.search(r'(.+)(（PMID：\d+）)(.+)', y)
-            if search:
-                text = search.group(1) + search.group(3) + search.group(2)
-                new_text.append(text)
-            else:
-                new_text.append(y)
-        sheet_Translation.cell(row=i, column=2).value = '|'.join(new_text)
-
-    wb_source.save('CKB证据翻译.xlsx')
-
-
-# ckb_translation('ckb证据翻译 (1).xlsx')
+main()
 
 time1 = time.time()
 print("运行总共耗时为%a秒" % (time1 - time0))
