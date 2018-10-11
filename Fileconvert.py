@@ -72,7 +72,7 @@ class Fileconvert(object):
             return text
 
     def tsvline(self, inputlist):
-        plus = [del_NAN('{}'.format(x)) for x in inputlist]
+        plus = [del_NAN(x) for x in inputlist]
         return '\t'.join(plus) + '\n'
 
     def rev_split(self, text, spacer, num=None):
@@ -87,7 +87,7 @@ def del_NAN(text):
 
 
 def tsvline(inputlist):
-    plus = [del_NAN('{}'.format(x)) for x in inputlist]
+    plus = [del_NAN(x) for x in inputlist]
     return '\t'.join(plus) + '\n'
 
 
