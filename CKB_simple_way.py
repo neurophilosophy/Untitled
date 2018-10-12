@@ -12,8 +12,15 @@ time0 = time.time()
 header = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'}
 
+path = 'C://Users/Administrator/Desktop'
+des_path = path
 
 # -------------------------------------------------抓取网页的分割线-------------------------------------------------------
+"""
+抓取网页保存到本地，默认保存到桌面的“CKB基因网页”。
+"""
+
+
 class CKB_html(object):
     def __init__(self, path):
         self.path = path
@@ -102,6 +109,9 @@ def grab_CKB(path):
 
 # grab_CKB(path)
 # -------------------------------------------------解析网页的分割线-------------------------------------------------------
+"""
+解析保存到本地的网页，需要先将文件夹“CKB基因网页”复制到桌面。
+"""
 
 
 def get_ElementTag(url_file, tag, is_url=True):
@@ -300,6 +310,33 @@ def get_mol_pro_list(profile, Mol_Pro_dict, main_page):
     return mol_pro_text
 
 
+# 从evidence中提取｛PMID: abstract｝字典
+def get_ref_dict(file='CKB_evidence.tsv', path='C://Users/Administrator/Desktop'):
+    fc = Fileconvert(path)
+    ref_dict = {}
+    for x in fc.tsv2list(file):
+        pmid = x[8]
+        abstr = x[9]
+        if pmid.isdigit():
+            ref_dict[pmid] = abstr
+
+        # 针对多篇文献叠加在一起的
+        elif '|' in pmid:
+            pmids = pmid.split('|')
+            abstrs = abstr.split('|')
+            num = 0
+            for x in pmids:
+                try:
+                    if ref_dict[x]:
+                        pass
+                except KeyError:
+                    if x.isdigit():
+                        ref_dict[x] = abstrs[num]
+                num += 1
+            ref_dict[pmid] = abstr
+    return ref_dict
+
+
 def operate_tableline_variant(content, line_max, title_max, main_page, gene_name, data_type, df_title, Refseq_dict,
                               Variant_dict, existed_gene_dict):
     """
@@ -327,15 +364,14 @@ def operate_tableline_variant(content, line_max, title_max, main_page, gene_name
             continue
         except KeyError:
             url = main_page + variant.a.get('href')
-
-            if (variant_text.isupper() and '-' not in variant_text) or ('del' in variant_text
-                                                                        or 'ins' in variant_text or 'dup' in variant_text) or 'fs' in variant_text:
+            if (variant_text.isupper() and '-' not in variant_text) or (
+                    'del' in variant_text or 'ins' in variant_text or 'dup' in variant_text) or 'fs' in variant_text:
                 loci = select_loci_byNM(url=url, gene_name=gene_name, Refseq_dict=Refseq_dict,
                                         Variant_dict=Variant_dict, existed_gene_dict=existed_gene_dict)
             else:
                 loci = [''] * 6
             plus = get_tag_Text(line) + loci
-            plus[1] = variant_text
+            plus[0] = variant_text
             append_plus(plus, gene_name=gene_name, data_type=data_type, df_title=df_title)
     return 1
 
@@ -543,7 +579,7 @@ def getCKB_content(save_path, gene_name, address, Refseq_dict, Variant_dict, Mol
                     pass
             except KeyError:
                 get_table_T(table_tag=table, gene_name=gene_name, data_type=data_type, save_path=save_path)
-        elif simple_way == 1:
+        elif simple_way == True:
             get_table_CKB_simple_way(table_tag=table, gene_name=gene_name, data_type=data_type, save_path=save_path)
         else:
             get_table_CKB_recursive(table_tag=table, gene_name=gene_name, data_type=data_type, save_path=save_path,
@@ -554,39 +590,13 @@ def getCKB_content(save_path, gene_name, address, Refseq_dict, Variant_dict, Mol
     return 'All Done!!!'
 
 
-path = 'C://Users/Administrator/Desktop'
-des_path = path
-
-
-# 从evidence中提取｛PMID: abstract｝字典
-def get_ref_dict(file='CKB_evidence.tsv', path='C://Users/Administrator/Desktop'):
-    fc = Fileconvert(path)
-    ref_dict = {}
-    for x in fc.tsv2list(file):
-        pmid = x[8]
-        abstr = x[9]
-        if pmid.isdigit():
-            ref_dict[pmid] = abstr
-
-        # 针对多篇文献叠加在一起的
-        elif '|' in pmid:
-            pmids = pmid.split('|')
-            abstrs = abstr.split('|')
-            num = 0
-            for x in pmids:
-                try:
-                    if ref_dict[x]:
-                        pass
-                except KeyError:
-                    if x.isdigit():
-                        ref_dict[x] = abstrs[num]
-                num += 1
-            ref_dict[pmid] = abstr
-    return ref_dict
-
-
 def main(simple_way=True):
-    # 转录本字典, Molecular_Profile字典, 变异hg38坐标字典
+    """
+    在本地已下载的网页文件基础上分为两种解析方式，联网解析的完整版模式和不联网解析的简易版模式（没有变异的hg38坐标，没有）
+    :param simple_way:
+    :return:
+    """
+    # 导入本地已有记录的转录本字典, Molecular_Profile字典, 变异hg38坐标字典
     fc = Fileconvert(des_path)
     Refseq_dict = {x[0]: x[-1] for x in fc.tsv2list('基因介绍列表-merged-merged.tsv')}
     try:
@@ -625,18 +635,21 @@ def main(simple_way=True):
         pass
 
     done_list = ['ABL1', 'AKT1', 'ALK', 'APC', 'ASXL1', 'ATM', 'ATRX', 'BCOR', 'BCORL1', 'BRAF', 'BRCA1', 'BRCA2',
-                 'CALR', 'CBL', 'CBLB', 'CBLC', 'CDH1', 'CDKN2A', 'CEBPA', 'CSF1R', 'CSF3R', 'CTNNB1', 'DNMT3A', 'EGFR',
-                 'EML4', 'ERBB2', 'ERBB4', 'ETV6', 'EZH2', 'FBXW7', 'FGFR1', 'FGFR2', 'FGFR3', 'FLT3', 'FOXL2', 'GATA1',
-                 'GATA2', 'GNA11', 'GNAQ', 'GNAS', 'HNF1A', 'HRAS', 'IDH1', 'IDH2', 'IKZF1', 'JAK2', 'JAK3', 'KDM6A',
-                 'KDR', 'KIT', 'KMT2A', 'KRAS', 'MAP2K1', 'MET', 'MLH1', 'MPL', 'MSH6', 'MYD88', 'NOTCH1', 'NPM1',
-                 'NRAS', 'PDGFRA', 'PHF6', 'PIK3CA', 'PTEN', 'PTPN11', 'RAD21', 'RB1', 'RET', 'ROS1', 'RUNX1', 'SETBP1',
-                 'SF3B1', 'SMAD4', 'SMARCB1', 'SMC3', 'SMO', 'SRC', 'SRSF2', 'STAG2', 'STK11', 'TET2', 'TP53']
+                 'CALR', 'CBL', 'CBLB', 'CBLC', 'CDH1', 'CDKN2A', 'CEBPA', 'CSF1R', 'CSF3R', 'CTNNB1',
+                 'DNMT3A', 'EGFR', 'EML4', 'ERBB2', 'ERBB4', 'ETV6', 'EZH2', 'FBXW7', 'FGFR1', 'FGFR2', 'FGFR3', 'FLT3',
+                 'FOXL2', 'GATA1', 'GATA2', 'GNA11', 'GNAQ', 'GNAS', 'HNF1A', 'HRAS', 'IDH1', 'IDH2', 'IKZF1', 'JAK2',
+                 'JAK3', 'KDM6A', 'KDR', 'KIT', 'KMT2A', 'KRAS', 'MAP2K1', 'MET', 'MLH1', 'MPL', 'MSH6', 'MYD88',
+                 'NOTCH1', 'NPM1', 'NRAS', 'PDGFRA', 'PHF6', 'PIK3CA', 'PTEN', 'PTPN11', 'RAD21', 'RB1', 'RET', 'ROS1',
+                 'RUNX1', 'SETBP1', 'SF3B1', 'SMAD4', 'SMARCB1', 'SMC3', 'SMO', 'SRC', 'SRSF2', 'STAG2', 'STK11',
+                 'TET2', 'TP53','U2AF1','']
+
     # 所有CKB基因的网页文件都保存在一个\CKB基因网页的文件夹里, 根据需要创建子目录
     fc = Fileconvert('{}\\CKB基因网页'.format(path))
     # 获取CKB的{基因: 基因html文件名称}字典
     CKB_genelist = [(x[0], x[2]) for x in fc.tsv2list('{}.tsv'.format(foldername))]
     for each in CKB_genelist:
         (gene_name, gene_html) = each
+
         # if gene_name in done_list:   continue
         getCKB_content(save_path=des_path, gene_name=gene_name, address='{}.html'.format(gene_name),
                        Refseq_dict=Refseq_dict, Variant_dict=Variant_dict, Mol_Pro_dict=Mol_Pro_dict,
@@ -653,7 +666,7 @@ def main(simple_way=True):
             time.sleep(10)
 
 
-main()
+main(simple_way=False)
 
 time1 = time.time()
 print("运行总共耗时为%a秒" % (time1 - time0))
