@@ -212,7 +212,7 @@ Nodelist为以九个属为标签获得的Nodelist,然后返回值是获得了中
 返回结果"张翠山 | 张无忌 | 殷素素 | 张三丰 | 没啊 | 郭襄 | 809"
 """
 
-
+"""
 yitian = ElementTree.fromstring('''<倚天><唯一的属>张翠山<唯一的种>张无忌</唯一的种>殷素素</唯一的属><唯一的属>张三丰<唯一的种>没啊</唯一的种>郭襄</唯一的属>809</倚天>''')
 #获取所有的<唯一的属>后面的内容
 
@@ -242,3 +242,4 @@ print('当前运行get_uniqueChildTagText:', get_uniqueChildTagText('科科科',
 print('当前运行get_uniqueChildTagText:', get_uniqueChildTagText('科科', '属', jinyong))
 
 print('当前运行get_uniqueChildTagText:', get_uniqueChildTagText('科', '属', jinyong))
+"""
