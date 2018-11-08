@@ -23,10 +23,8 @@ def _parse(Elemnt):
     p_childs = [(child.tag, _parse(child)) for child in list(Elemnt)]
     if not tags:
         # 文本处理
-        text = Elemnt.text.strip()
-
-        if text:
-            text = text.strip()
+        if Elemnt.text:
+            text = Elemnt.text.strip()
         else:
             text = ''
         return text
